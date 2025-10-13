@@ -3,3 +3,4 @@ numpy
 pandas
 nba_api
 sqlalchemy
+mysql-connector-python
