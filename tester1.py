@@ -1,11 +1,35 @@
-# pip install nba_api
+# from sqlalchemy import create_engine, Column, Integer, String
+# from sqlalchemy.orm import declarative_base, sessionmaker
 
 from nba_api.stats.endpoints import shotchartdetail
 from nba_api.stats.static import players, teams
 import pandas as pd
 
-# from sqlalchemy import create_engine, Column, Integer, String
-# from sqlalchemy.orm import declarative_base, sessionmaker
+def JB_trial():
+    player_id, team_id = get_player_and_team_ids("Jaylen Brown", "Boston Celtics")
+
+    shotchart = shotchartdetail.ShotChartDetail(
+        team_id=team_id,
+        player_id=player_id,
+        season_type_all_star='Regular Season',
+        season_nullable='2024-25',
+        context_measure_simple='FGA',  # Field Goal Attempts
+        game_id_nullable=''            # leave empty for full season
+    )
+
+    jb_dict = shotchart.get_dict()
+    #print(jb_df.loc[0])
+
+    return jb_dict
+
+
+def get_player_and_team_ids(player_name, team_name):
+    player_id = players.find_players_by_full_name(player_name)[0]['id']
+    team_id = teams.find_teams_by_full_name(team_name)[0]['id']
+    return player_id, team_id
+
+#JB_trial()
+
 
 # DATABASE_URL = "mysql+mysqlconnector://root:admin@mysql_container:3306/basketball_db"
 
@@ -13,32 +37,37 @@ import pandas as pd
 
 # Base = declarative_base()
 
-class ShotDetail(Base):
-    __tablename__ = 'shot_detail'
+# class PlayByPlay(Base):
+#     __tablename__ = 'playbyplay'
 
-    game_id = Column(Integer)
-    game_event_id = Column(Integer)
-    player_id = Column(Integer)
-    player_name = Column(String(50))
-    team_id = Column(Integer)
-    team_name = Column(String(50))
-    period = Column(Integer)
-    minutes_remaining = Column(Integer)
-    seconds_remaining = Column(Integer)
-    event_type = Column(String(50))
-    action_type = Column(String(50))
-    shot_type = Column(String(50))
-    shot_zone_basic = Column(String(50))
-    shot_zone_area = Column(String(50))
-    shot_zone_range = Column(String(50))
-    shot_distance = Column(Integer)
-    loc_x = Column(Integer)
-    loc_y = Column(Integer)
-    shot_attempted_flag = Column(Integer)
-    shot_made_flag = Column(Integer)
-    game_date = Column(Integer)
-    htm = Column(String(5))
-    vtm = Column(String(5))
+# class ShotChart(Base):
+#     __tablename__ = 'shotchart'
+
+#     game_id = Column(Integer)
+#     game_event_id = Column(Integer)
+#     player_id = Column(Integer)
+#     player_name = Column(String(50))
+#     team_id = Column(Integer)
+#     team_name = Column(String(50))
+#     period = Column(Integer)
+#     minutes_remaining = Column(Integer)
+#     seconds_remaining = Column(Integer)
+#     event_type = Column(String(50))
+#     action_type = Column(String(50))
+#     shot_type = Column(String(50))
+#     shot_zone_basic = Column(String(50))
+#     shot_zone_area = Column(String(50))
+#     shot_zone_range = Column(String(50))
+#     shot_distance = Column(Integer)
+#     loc_x = Column(Integer)
+#     loc_y = Column(Integer)
+#     shot_attempted_flag = Column(Integer)
+#     shot_made_flag = Column(Integer)
+#     game_date = Column(Integer)
+#     htm = Column(String(5))
+#     vtm = Column(String(5))
+
+
 
 #     def __repr__(self):
 #         return f"<User(name={self.name}, email={self.email})>"
