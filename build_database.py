@@ -8,7 +8,7 @@ import nba_api_functions as naf
 
 #Parse argument for file name containing container name, database name, and root password.
 parser = argparse.ArgumentParser(description="Read text file with database name and password.")
-parser.add_argument("-p", "--pass", argparse.FileType("r"), default=None, help="Path to file that contains container name, database name, and root password.")
+parser.add_argument("-p", "--pwd", type=argparse.FileType("r"), default=None, help="Path to file that contains container name, database name, and root password.")
 args = parser.parse_args()
 #Get DATABASE_URL using get_database_url function from password_parse
 DATABASE_URL = get_database_url(args)
