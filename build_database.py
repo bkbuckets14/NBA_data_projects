@@ -1,10 +1,17 @@
+import argparse
+from password_parse import get_database_url
+
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 import nba_api_functions as naf
 
-#database URL for connection
-DATABASE_URL = "mysql+mysqlconnector://root:admin@mysql_container:3306/basketball_db"
+#Parse argument for file name containing container name, database name, and root password.
+parser = argparse.ArgumentParser(description="Read text file with database name and password.")
+parser.add_argument("-p", "--pass", argparse.FileType("r"), default=None, help="Path to file that contains container name, database name, and root password.")
+args = parser.parse_args()
+#Get DATABASE_URL using get_database_url function from password_parse
+DATABASE_URL = get_database_url(args)
 
 #create the engine to interact with Database
 engine = create_engine(DATABASE_URL)  # echo=True logs SQL statements
@@ -29,12 +36,12 @@ class ShotChart(Base):
     PERIOD = Column(Integer)
     MINUTES_REMAINING = Column(Integer)
     SECONDS_REMAINING = Column(Integer)
-    EVENT_TYPE = Column(String(50)) #What is the longest?
-    ACTION_TYPE = Column(String(50)) #What is the longest?
-    SHOT_TYPE = Column(String(50)) #What is the longest?
-    SHOT_ZONE_BASIC = Column(String(50)) #What is the longest?
-    SHOT_ZONE_AREA = Column(String(50)) #What is the longest?
-    SHOT_ZONE_RANGE = Column(String(50)) #What is the longest?
+    EVENT_TYPE = Column(String(25))
+    ACTION_TYPE = Column(String(50))
+    SHOT_TYPE = Column(String(25))
+    SHOT_ZONE_BASIC = Column(String(30))
+    SHOT_ZONE_AREA = Column(String(30))
+    SHOT_ZONE_RANGE = Column(String(20))
     SHOT_DISTANCE = Column(Integer)
     LOC_X = Column(Integer)
     LOC_Y = Column(Integer)
