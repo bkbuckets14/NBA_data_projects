@@ -2,7 +2,7 @@ def get_database_url(args):
 
     if args.pwd == None:
         ROOT_PASSWORD = "admin"
-        DATABASE_NAME = "database"
+        DATABASE_NAME = "basketball_db"
         CONTAINER_NAME = "mysql_container"
     else:
         with args.pwd as ff:
