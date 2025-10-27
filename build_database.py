@@ -1,15 +1,17 @@
 import argparse
-from password_parse import get_database_url
+from password_parse import get_database_url #custom package/function to get DATABASE_URL from password file
 
+#load in SQLAlchemy packages
 from sqlalchemy import create_engine, Column, Integer, String
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-import nba_api_functions as naf
+import nba_api_functions as naf #custom package to interact with nba_api
 
 #Parse argument for file name containing container name, database name, and root password.
 parser = argparse.ArgumentParser(description="Read text file with database name and password.")
 parser.add_argument("-p", "--pwd", type=argparse.FileType("r"), default=None, help="Path to file that contains container name, database name, and root password.")
 args = parser.parse_args()
+
 #Get DATABASE_URL using get_database_url function from password_parse
 DATABASE_URL = get_database_url(args)
 
@@ -19,6 +21,7 @@ engine = create_engine(DATABASE_URL)  # echo=True logs SQL statements
 #declaritive base to build tables from
 Base = declarative_base()
 
+#Future database to create
 # class PlayByPlay(Base):
 #     __tablename__ = 'playbyplay'
 
