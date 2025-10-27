@@ -30,5 +30,5 @@ df = pd.read_sql("SELECT * FROM basketball_db", engine)
 print(df)
 
 #close connection (and dispose of old ones)
-conn.close()
+#conn.close()
 engine.dispose()
