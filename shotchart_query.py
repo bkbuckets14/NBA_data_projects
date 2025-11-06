@@ -15,20 +15,13 @@ DATABASE_URL = get_database_url(args)
 #create the engine to interact with Database
 engine = db.create_engine(DATABASE_URL)
 
-df = pd.read_sql("SELECT * FROM basketball_db", engine)
-
-#connect to engine
-#conn = engine.connect()
-
-#query to run
-#query = db.text('SELECT SHOT_ZONE_RANGE AS sb, COUNT(*) FROM shotchart GROUP BY SHOT_ZONE_RANGE')
-
-#execute query
-#exe = conn.execute(query)
-#result = exe.fetchall()
-#df = pd.read_sql("SELECT * FROM basketball_db WHERE PLAYER_NAME = 'Jaylen Brown'", engine)
+#simple query to get all columns from the shotchart database
+df = pd.read_sql("SELECT * FROM shotchart", engine)
 print(df)
 
-#close connection (and dispose of old ones)
-#conn.close()
+#query to get the number of shot attempts per player on the Boston Celtics from most to least shots
+df2 = pd.read_sql("SELECT PLAYER_NAME, Count(*) as FGAs FROM shotchart WHERE TEAM_NAME='Boston Celtics' GROUP BY PLAYER_NAME ORDER BY FGAs DESC ", engine)
+print(df2)
+
+#fully dispose of engine
 engine.dispose()
