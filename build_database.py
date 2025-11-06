@@ -1,11 +1,11 @@
 import argparse
-from password_parse import get_database_url #custom package/function to get DATABASE_URL from password file
+import password_parse as bk_pp #custom package/function to get DATABASE_URL from password file
 
 #load in SQLAlchemy packages
-from sqlalchemy import create_engine, Column, Integer, String
+from sqlalchemy import create_engine, Column, Integer, String, Date
 from sqlalchemy.orm import declarative_base, sessionmaker
 
-import nba_api_functions as naf #custom package to interact with nba_api
+import nba_api_functions as bk_naf #custom package to interact with nba_api
 
 #Parse argument for file name containing container name, database name, and root password.
 parser = argparse.ArgumentParser(description="Read text file with database name and password.")
@@ -13,17 +13,13 @@ parser.add_argument("-p", "--pwd", type=argparse.FileType("r"), default=None, he
 args = parser.parse_args()
 
 #Get DATABASE_URL using get_database_url function from password_parse
-DATABASE_URL = get_database_url(args)
+DATABASE_URL = bk_pp.get_database_url(args)
 
 #create the engine to interact with Database
 engine = create_engine(DATABASE_URL)  # echo=True logs SQL statements
 
 #declaritive base to build tables from
 Base = declarative_base()
-
-#Future database to create
-# class PlayByPlay(Base):
-#     __tablename__ = 'playbyplay'
 
 #ShotChart class/table
 class ShotChart(Base):
@@ -50,7 +46,7 @@ class ShotChart(Base):
     LOC_Y = Column(Integer)
     SHOT_ATTEMPTED_FLAG = Column(Integer)
     SHOT_MADE_FLAG = Column(Integer)
-    GAME_DATE = Column(Integer)
+    GAME_DATE = Column(Date)
     HTM = Column(String(4))
     VTM = Column(String(4))
 
@@ -62,23 +58,26 @@ Base.metadata.create_all(engine)
 Session = sessionmaker(bind=engine)
 session = Session()
 
-# get shotchart data from nba_api_functions
-data = naf.shotchart_2024_2025()
+#list to handle multiple teams at a time
+teams = ['Boston Celtics', 'Philadelphia 76ers', 'New York Knicks', 'Toronto Raptors', 'Brooklyn Nets']
 
-# insert data into the shotchart table
-for i, row in enumerate(data):
-    new_shot_chart = ShotChart(**row)
-    session.add(new_shot_chart)
-    if i%10000==0:
-        print(i, "rows added to database")
+for team in teams:
+    # get shotchart data from nba_api_functions for a particular team
+    data = bk_naf.team_shotchart(team=team)
 
-# commit the data
-session.commit()
+    # insert data into the shotchart table
+    for i, row in enumerate(data):
+        new_shot_chart = ShotChart(**row)
+        session.add(new_shot_chart)
+        if i%1000==0:
+            print(i, "rows added to database")
+
+    # commit the data
+    session.commit()
 
 # test query for shot chart data
-shots = session.query(ShotChart).limit(15).all()
-for shot in shots:
-    print(shot.ID, shot.GAME_EVENT_ID, shot.SHOT_ZONE_BASIC)
+shots = session.query(ShotChart).all()
+print("Total DB Size:", len(shots), "shots")
 
 #close session (and dispose of old ones)
 session.close()
